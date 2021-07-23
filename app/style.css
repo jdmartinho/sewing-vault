@@ -1,0 +1,8 @@
+.vertical {
+  border-left: 3px solid rgb(67, 183, 204);
+  height: 300px;
+  position: relative;
+  left: 33%;
+  margin-left: -3px;
+  top: 0;
+}

@@ -1,0 +1,17 @@
+{
+  "name": "sewing-vault",
+  "version": "1.0.0",
+  "description": "Organize your sewing patterns",
+  "main": "app/main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Joao Martinho",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^13.1.7",
+    "knex": "^0.95.7",
+    "sqlite3": "^5.0.2"
+  }
+}

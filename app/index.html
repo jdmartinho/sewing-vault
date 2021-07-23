@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <title>Sewing Vault</title>
+    <link rel="stylesheet" href="style.css" type="text/css" />
+  </head>
+  <body>
+    <p>Sewing Vault</p>
+    <hr />
+    <section>
+      <input id="search-input" name="Search Pattern" type="search" />
+      <button id="search-button" name="Search" type="submit">Search</button>
+      <p></p>
+      <button
+        id="add-new-button"
+        name="Add New"
+        type="button"
+        value="Add New"
+        onclick=""
+      >
+        Add New
+      </button>
+      <button
+        id="configuration-button"
+        name="Configuration"
+        value="Configuration"
+        type="button"
+      >
+        Configuration
+      </button>
+    </section>
+    <div class="vertical"></div>
+    <ul id="pattern-list"></ul>
+  </body>
+  <script>
+    require("./indexrenderer.js");
+  </script>
+</html>
