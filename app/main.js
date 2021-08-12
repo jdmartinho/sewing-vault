@@ -1,4 +1,5 @@
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, dialog } = require("electron");
+const fs = require("fs");
 const db = require("./database");
 const electron = require("electron");
 const ipcMain = electron.ipcMain;
@@ -17,6 +18,7 @@ app.on("ready", () => {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
+      webSecurity: false,
     },
     show: false,
   });
@@ -68,8 +70,26 @@ ipcMain.on("add-new-button-clicked", () => {
   }
 });
 
-ipcMain.on("submit-new-pattern-button-clicked", (event, patternName) => {
-  addNewSewingPattern(patternName);
+ipcMain.on("submit-new-pattern-button-clicked", (event, pattern) => {
+  addNewSewingPattern(pattern);
+});
+
+// The dialog causes a refresh if the button in the HTML doesn't have
+// the 'button' type set.
+ipcMain.on("open-new-image-button-clicked", (event) => {
+  let window = windows.get(ADD_NEW_WINDOW_ID);
+  console.log("main - open new image button clicked");
+  const files = dialog.showOpenDialogSync(window, {
+    properties: ["openFile"],
+    filters: [{ name: "Image Files", extensions: ["jpg", "jpeg", "png"] }],
+  });
+
+  if (files) {
+    console.log("main - open new image button clicked -- image selected");
+    const cover = files[0];
+    const coverb64 = fs.readFileSync(cover).toString("base64");
+    window.webContents.send("cover-image-uploaded", coverb64);
+  }
 });
 
 /**
@@ -130,6 +150,7 @@ const createNewSewingPatternWindow = (fileLocation, id) => {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
+      webSecurity: false,
     },
     show: false,
   });
@@ -214,9 +235,9 @@ const openSewingPatternById = async (id) => {
 /**
  * Calls the Database API to insert a new sewing pattern in the database.
  */
-const addNewSewingPattern = (exports.addNewSewingPattern = (patternName) => {
+const addNewSewingPattern = (exports.addNewSewingPattern = (pattern) => {
   console.log("main - Adding a new sewing pattern");
-  db.addNewSewingPattern(patternName).then((insertedId) => {
+  db.addNewSewingPattern(pattern).then((insertedId) => {
     console.log("main - inserted new with id " + insertedId);
   });
 });

@@ -16,6 +16,7 @@ database.schema.hasTable("patterns").then((exists) => {
     return database.schema.createTable("patterns", (t) => {
       t.increments("id").primary();
       t.string("name", 500);
+      t.binary("cover");
     });
   }
 });
@@ -70,10 +71,10 @@ const getSewingPatternById = (exports.getSewingPatternById = (id) => {
 /**
  * Inserts a new sewing pattern into the database
  */
-const addNewSewingPattern = (exports.addNewSewingPattern = (patternName) => {
-  console.log("database - adding new sewing pattern named " + patternName);
+const addNewSewingPattern = (exports.addNewSewingPattern = (pattern) => {
+  console.log("database - adding new sewing pattern named " + pattern.name);
   return database("patterns")
-    .insert({ name: patternName })
+    .insert({ name: pattern.name, cover: pattern.cover })
     .then((insertedId) => insertedId)
     .catch(console.error);
 });
