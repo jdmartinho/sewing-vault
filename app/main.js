@@ -76,19 +76,18 @@ ipcMain.on("submit-new-pattern-button-clicked", (event, pattern) => {
 
 // The dialog causes a refresh if the button in the HTML doesn't have
 // the 'button' type set.
-ipcMain.on("open-new-image-button-clicked", (event) => {
+ipcMain.on("open-cover-image-button-clicked", (event) => {
   let window = windows.get(ADD_NEW_WINDOW_ID);
-  console.log("main - open new image button clicked");
+  console.log("main - open cover image button clicked");
   const files = dialog.showOpenDialogSync(window, {
     properties: ["openFile"],
     filters: [{ name: "Image Files", extensions: ["jpg", "jpeg", "png"] }],
   });
 
   if (files) {
-    console.log("main - open new image button clicked -- image selected");
-    const cover = files[0];
-    const coverb64 = fs.readFileSync(cover).toString("base64");
-    window.webContents.send("cover-image-uploaded", coverb64);
+    console.log("main - open cover image button clicked -- image selected");
+    let imageb64 = fs.readFileSync(files[0]).toString("base64");
+    window.webContents.send("cover-image-uploaded", imageb64);
   }
 });
 

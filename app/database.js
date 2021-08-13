@@ -21,6 +21,16 @@ database.schema.hasTable("patterns").then((exists) => {
   }
 });
 
+database.schema.hasTable("images").then((exists) => {
+  if (!exists) {
+    return database.schema.createTable("images", (t) => {
+      t.increments("id").primary();
+      t.binary("image");
+      t.foreign("patternId").references("id").inTable("patterns");
+    });
+  }
+});
+
 /***** Database API Functions *****/
 
 /**
