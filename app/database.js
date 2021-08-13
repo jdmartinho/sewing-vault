@@ -48,8 +48,8 @@ const getAllPatterns = (exports.getAllPatterns = () => {
  * This functions returns all sewing patterns that contain the argument
  * in the name. The name needs to be escaped to be processed correctly
  * as an SQL query.
- * @param {name} name
- * @returns All the sewing patterns containing the argument in the name
+ * @param {string} name The name to use in the query
+ * @returns {Object[]} All the sewing patterns containing the argument in the name
  */
 const getSewingPatternsByName = (exports.getSewingPatternsByName = (name) => {
   console.log("database - getting sewing patterns named like " + name);
@@ -62,8 +62,8 @@ const getSewingPatternsByName = (exports.getSewingPatternsByName = (name) => {
 
 /**
  * Get the pattern matching the provided identifier.
- * @param {id} id
- * @returns The sewing pattern matching the id
+ * @param {intger} id The id to use in the query
+ * @returns {Object[]} The sewing patterns matching the id (caller methods should select the first element)
  */
 const getSewingPatternById = (exports.getSewingPatternById = (id) => {
   console.log("database - getting sewing pattern with id " + id);
@@ -80,6 +80,8 @@ const getSewingPatternById = (exports.getSewingPatternById = (id) => {
 
 /**
  * Inserts a new sewing pattern into the database
+ * @param {Object} pattern The sewing pattern to insert into the database
+ * @returns {integer} The id of the newly inserted pattern
  */
 const addNewSewingPattern = (exports.addNewSewingPattern = (pattern) => {
   console.log("database - adding new sewing pattern named " + pattern.name);
@@ -91,6 +93,8 @@ const addNewSewingPattern = (exports.addNewSewingPattern = (pattern) => {
 
 /**
  * Updates a sewing pattern in the database
+ * @param {Object} pattern The sewing pattern object to update in the database
+ * @returns {integer} The id of the updated pattern
  */
 const updateSewingPattern = (exports.updateSewingPattern = (pattern) => {
   console.log("database - updating sewing pattern named " + pattern.name);

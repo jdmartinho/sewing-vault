@@ -180,7 +180,7 @@ const createNewSewingPatternWindow = (fileLocation, id) => {
 
 /**
  * Sends an event to the main window to display this list of patterns.
- * @param {array of patterns} patterns The list of patterns to display in the UI
+ * @param {Object[]} patterns The array of patterns to display in the UI
  */
 const displayPatterns = (patterns) => {
   // Needs to update the index.html
@@ -193,6 +193,7 @@ const displayPatterns = (patterns) => {
 /**
  * Calls the Database API to get all the existing sewing patterns
  * and then displays them by calling displayPatterns().
+ * @returns {Object[]} All the patterns in the database
  */
 const getAllSewingPatterns = () => {
   console.log("main - Getting all sewing patterns");
@@ -209,6 +210,7 @@ const getAllSewingPatterns = () => {
  * provided string in the name and then displays them in the results
  * are by calling displayPatterns().
  * @param {string} searchText
+ * @returns {Object[]} The patterns that matched the query
  */
 const getSewingPatternsByName = (searchText) => {
   console.log("main - Getting sewing patterns by name: " + searchText);
@@ -221,7 +223,7 @@ const getSewingPatternsByName = (searchText) => {
  * This function is async and awaits for the database query to finish and return.
  * It uses the Database API to get the sewing pattern matching the provided id.
  * @param {integer} id The identifier in the database of the pattern to open
- * @returns {pattern} The retrieved pattern
+ * @returns {Object} The retrieved pattern
  */
 const openSewingPatternById = async (id) => {
   console.log("main - Getting sewing pattern by id: " + id);
@@ -235,6 +237,8 @@ const openSewingPatternById = async (id) => {
 
 /**
  * Calls the Database API to insert a new sewing pattern in the database.
+ * @param {Object} pattern The sewing pattern object to insert
+ * @returns {integer} The identifier of the inserted pattern
  */
 const addNewSewingPattern = (pattern) => {
   console.log("main - Adding a new sewing pattern");
@@ -243,6 +247,11 @@ const addNewSewingPattern = (pattern) => {
   });
 };
 
+/**
+ * Calls the Database API to update a sewing pattern.
+ * @param {Object} pattern The sewing pattern object to update
+ * @returns {integer} The identifier of the updated pattern
+ */
 const updateSewingPattern = (pattern) => {
   console.log("main - Updating sewing pattern");
   db.updateSewingPattern(pattern).then((updatedId) => {
