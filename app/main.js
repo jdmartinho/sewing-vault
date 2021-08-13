@@ -120,6 +120,10 @@ ipcMain.on("details-button-clicked", async (event, id) => {
   }
 });
 
+ipcMain.on("save-changes-button-clicked", (event, pattern) => {
+  updateSewingPattern(pattern);
+});
+
 /***** Functions *****/
 
 /**
@@ -192,7 +196,7 @@ const displayPatterns = (patterns) => {
  * Calls the Database API to get all the existing sewing patterns
  * and then displays them by calling displayPatterns().
  */
-const getAllSewingPatterns = (exports.getAllSewingPatterns = () => {
+const getAllSewingPatterns = () => {
   console.log("main - Getting all sewing patterns");
   db.getAllPatterns().then((results) => {
     results.forEach((element) => {
@@ -200,7 +204,7 @@ const getAllSewingPatterns = (exports.getAllSewingPatterns = () => {
     });
     displayPatterns(results);
   });
-});
+};
 
 /**
  * Calls the Database API to search for sewing patterns containing the
@@ -234,9 +238,16 @@ const openSewingPatternById = async (id) => {
 /**
  * Calls the Database API to insert a new sewing pattern in the database.
  */
-const addNewSewingPattern = (exports.addNewSewingPattern = (pattern) => {
+const addNewSewingPattern = (pattern) => {
   console.log("main - Adding a new sewing pattern");
   db.addNewSewingPattern(pattern).then((insertedId) => {
     console.log("main - inserted new with id " + insertedId);
   });
-});
+};
+
+const updateSewingPattern = (pattern) => {
+  console.log("main - Updating sewing pattern");
+  db.updateSewingPattern(pattern).then((updatedId) => {
+    console.log("main - updated pattern with id " + updatedId);
+  });
+};

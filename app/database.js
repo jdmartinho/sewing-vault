@@ -88,3 +88,14 @@ const addNewSewingPattern = (exports.addNewSewingPattern = (pattern) => {
     .then((insertedId) => insertedId)
     .catch(console.error);
 });
+
+/**
+ * Updates a sewing pattern in the database
+ */
+const updateSewingPattern = (exports.updateSewingPattern = (pattern) => {
+  console.log("database - updating sewing pattern named " + pattern.name);
+  return database("patterns")
+    .where("id", pattern.id)
+    .update({ name: pattern.name })
+    .catch(console.error);
+});

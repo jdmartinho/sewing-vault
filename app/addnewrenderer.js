@@ -6,7 +6,7 @@ const submitNewPatternButton = document.querySelector(
   "#submit-new-pattern-button"
 );
 const openCoverImageButton = document.querySelector("#open-cover-image");
-const patternNameInput = document.querySelector("#patternname");
+const patternNameInput = document.querySelector("#pattern-name");
 const coverImageDisplay = document.querySelector("#cover-image");
 
 let COVER_IMAGE = null;
