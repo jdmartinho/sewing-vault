@@ -18,7 +18,6 @@ app.on("ready", () => {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
-      webSecurity: false,
     },
     show: false,
   });
@@ -153,7 +152,6 @@ const createNewSewingPatternWindow = (fileLocation, id) => {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
-      webSecurity: false,
     },
     show: false,
   });
