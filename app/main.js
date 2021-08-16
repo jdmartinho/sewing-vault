@@ -9,8 +9,7 @@ const PATTERN_DETAIL_FILE_LOCATION = "app/patterndetail.html";
 const ADD_NEW_WINDOW_ID = "addnew";
 
 // Keeps track of windows
-const windows = new Map();
-
+let windows = new Map();
 let mainWindow = null;
 
 app.on("ready", () => {
@@ -71,6 +70,10 @@ ipcMain.on("add-new-button-clicked", () => {
 
 ipcMain.on("submit-new-pattern-button-clicked", (event, pattern) => {
   addNewSewingPattern(pattern);
+  let window = windows.get(ADD_NEW_WINDOW_ID);
+  window.close();
+  mainWindow.focus();
+  getAllSewingPatterns();
 });
 
 // The dialog causes a refresh if the button in the HTML doesn't have
