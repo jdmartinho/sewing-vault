@@ -26,6 +26,10 @@ ipcRenderer.on("list-updated", (event, patterns) => {
 
 /***** Functions *****/
 
+/**
+ * Renders a list of patterns in the UI.
+ * @param {Object[]} patterns The list of patterns to show in the UI
+ */
 const renderSewingPatternsToList = (patterns) => {
   // First we make sure we clean all the previous results
   patternList.innerHTML = "";
@@ -38,10 +42,18 @@ const renderSewingPatternsToList = (patterns) => {
     let detailsButton = createDetailsButton(element);
     item.appendChild(detailsButton);
 
+    let coverImage = createCoverImage(element);
+    item.appendChild(coverImage);
+
     patternList.appendChild(item);
   });
 };
 
+/**
+ * Creates the HTML of a details button for the pattern.
+ * @param {Object} element The pattern to use
+ * @returns {HTMLElement} A details button for the provided pattern
+ */
 const createDetailsButton = (element) => {
   let detailsButton = document.createElement("button");
   const detailsButtonId = "button-details-" + element.id;
@@ -55,4 +67,17 @@ const createDetailsButton = (element) => {
   });
 
   return detailsButton;
+};
+
+/**
+ * Creates a new div with the cover image for the pattern inside.
+ * @param {Object} element The pattern to use
+ * @returns {HTMLElement} A div with the cover image inside
+ */
+const createCoverImage = (element) => {
+  let coverImage = document.createElement("div");
+  const imgSrc = `data:image/jpg;base64,${element.cover}`;
+  const outHtml = `<img src=\"${imgSrc}\" style=\"width:100px;height:auto;\"/>`;
+  coverImage.insertAdjacentHTML("beforeend", outHtml);
+  return coverImage;
 };
