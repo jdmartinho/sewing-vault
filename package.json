@@ -12,6 +12,8 @@
   "devDependencies": {
     "electron": "^13.1.7",
     "knex": "^0.95.7",
+    "nedb": "^1.8.0",
     "sqlite3": "^5.0.2"
-  }
+  },
+  "dependencies": {}
 }

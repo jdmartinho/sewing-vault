@@ -2,7 +2,10 @@ const sqlite3 = require("sqlite3");
 const knex = require("knex");
 
 /***** Database Setup *****/
-
+/**
+ * This SQL Relational Database implementation uses sqlite3 with Knex.js
+ * https://knexjs.org/
+ */
 const database = knex({
   client: "sqlite3",
   connection: {
@@ -14,13 +17,34 @@ const database = knex({
 database.schema.hasTable("patterns").then((exists) => {
   if (!exists) {
     return database.schema.createTable("patterns", (t) => {
-      t.increments("id").primary();
+      t.increments("_id").primary();
       t.string("name", 500);
-      t.binary("cover");
+      t.binary("cover"); /*
+      t.integer("year");
+      t.enu("era", [
+        "vintage",
+        "pre-20th-century",
+        "1900s",
+        "1910s",
+        "1920s",
+        "1930s",
+        "1940s",
+        "1950s",
+        "1960s",
+        "1970s",
+        "1980s",
+        "1990s",
+        "2000s",
+        "2010s",
+        "2020s",
+        "contemporary",
+      ]);
+      t.string("company", 200);
+      t.text("notes");*/
     });
   }
 });
-
+/*
 database.schema.hasTable("images").then((exists) => {
   if (!exists) {
     return database.schema.createTable("images", (t) => {
@@ -30,7 +54,7 @@ database.schema.hasTable("images").then((exists) => {
     });
   }
 });
-
+*/
 /***** Database API Functions *****/
 
 /**
@@ -62,7 +86,7 @@ const getSewingPatternsByName = (exports.getSewingPatternsByName = (name) => {
 
 /**
  * Get the pattern matching the provided identifier.
- * @param {intger} id The id to use in the query
+ * @param {integer} id The id to use in the query
  * @returns {Object[]} The sewing patterns matching the id (caller methods should select the first element)
  */
 const getSewingPatternById = (exports.getSewingPatternById = (id) => {

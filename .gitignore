@@ -1,2 +1,5 @@
 node_modules
 sewing-vault.sqlite
+.VSCodeCounter
+vault
+vault.db

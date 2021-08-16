@@ -36,7 +36,7 @@ const renderSewingPatternsToList = (patterns) => {
   // After we create an entry for each new pattern and add to the list
   patterns.forEach((element) => {
     let item = document.createElement("li");
-    item.setAttribute("id", element.id);
+    item.setAttribute("id", element._id);
     item.appendChild(document.createTextNode(element.name));
 
     let detailsButton = createDetailsButton(element);
@@ -56,14 +56,14 @@ const renderSewingPatternsToList = (patterns) => {
  */
 const createDetailsButton = (element) => {
   let detailsButton = document.createElement("button");
-  const detailsButtonId = "button-details-" + element.id;
+  const detailsButtonId = "button-details-" + element._id;
   detailsButton.setAttribute("id", detailsButtonId);
   detailsButton.setAttribute("value", "See Details");
   detailsButton.innerText = "See Details";
 
   detailsButton.addEventListener("click", () => {
     console.log(`indexrenderer - details button ${detailsButtonId} clicked`);
-    ipcRenderer.send("details-button-clicked", element.id);
+    ipcRenderer.send("details-button-clicked", element._id);
   });
 
   return detailsButton;

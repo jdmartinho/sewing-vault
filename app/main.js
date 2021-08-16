@@ -1,6 +1,6 @@
 const { app, BrowserWindow, dialog } = require("electron");
 const fs = require("fs");
-const db = require("./database");
+const db = require("./nosqldb");
 const electron = require("electron");
 const ipcMain = electron.ipcMain;
 
@@ -122,8 +122,12 @@ ipcMain.on("details-button-clicked", async (event, id) => {
   }
 });
 
-ipcMain.on("save-changes-button-clicked", (event, pattern) => {
-  updateSewingPattern(pattern);
+ipcMain.on("save-changes-button-clicked", async (event, pattern) => {
+  let updatedId = await updateSewingPattern(pattern);
+  let window = windows.get(updatedId);
+  window.close();
+  mainWindow.focus();
+  getAllSewingPatterns();
 });
 
 /***** Functions *****/
@@ -202,7 +206,7 @@ const getAllSewingPatterns = () => {
   console.log("main - Getting all sewing patterns");
   db.getAllPatterns().then((results) => {
     results.forEach((element) => {
-      console.log("main - id: " + element.id + " name: " + element.name);
+      console.log("main - id: " + element._id + " name: " + element.name);
     });
     displayPatterns(results);
   });
@@ -255,9 +259,12 @@ const addNewSewingPattern = (pattern) => {
  * @param {Object} pattern The sewing pattern object to update
  * @returns {integer} The identifier of the updated pattern
  */
-const updateSewingPattern = (pattern) => {
+const updateSewingPattern = async (pattern) => {
   console.log("main - Updating sewing pattern");
-  db.updateSewingPattern(pattern).then((updatedId) => {
-    console.log("main - updated pattern with id " + updatedId);
+  var updatedId = null;
+  var aPromise = await db.updateSewingPattern(pattern).then((returnedId) => {
+    console.log("main - updated pattern with id " + returnedId);
+    updatedId = returnedId;
   });
+  return updatedId;
 };

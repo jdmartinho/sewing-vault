@@ -18,7 +18,7 @@ saveChangesButton.addEventListener("click", () => {
 });
 
 ipcRenderer.on("pattern-details-ready", (event, pattern) => {
-  PATTERN_ID = pattern.id;
+  PATTERN_ID = pattern._id;
   console.log("----> got something");
   console.log("patterndetailrenderer - received details: " + pattern);
   patternNameInput.value = pattern.name;
