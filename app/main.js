@@ -46,11 +46,42 @@ app.on("window-all-closed", () => {
 
 /***** IPC Communication *****/
 
+//**** indexrenderer.js
+
 ipcMain.on("search-button-clicked", (event, searchText) => {
   if (!searchText) {
     getAllSewingPatterns();
   } else {
     getSewingPatternsByName(searchText);
+  }
+});
+
+/**
+ * This handler reacts when the details button is clicked for a pattern in the
+ * main window.
+ * Once a pattern is selected we make sure there isn't already a window opened
+ * for it, if so we focus on it.
+ * Otherwise we create a new window with the proper HTML file location and an
+ * identifier that matches the database id of the pattern selected.
+ * After we create a window we await on the call to the function that retrieves
+ * the pattern from the database and then send an event to the window, once its
+ * focused, with the pattern to display the data.
+ * @param {integer} id The unique id of the pattern to open
+ */
+ipcMain.on("details-button-clicked", async (event, id) => {
+  let window;
+  if (windows.has(id)) {
+    window = windows.get(id);
+    window.focus();
+  } else {
+    window = createNewSewingPatternWindow(PATTERN_DETAIL_FILE_LOCATION, id);
+    let pattern = await openSewingPatternById(id);
+    console.log("main - details button clicked for: " + pattern.name);
+    window.setTitle("Sewing Vault - " + pattern.name);
+    window.once("focus", () => {
+      window.webContents.send("pattern-details-ready", pattern);
+      console.log("main - sent pattern details ready event");
+    });
   }
 });
 
@@ -67,6 +98,8 @@ ipcMain.on("add-new-button-clicked", () => {
     window.setTitle("Sewing Vault - Add New Pattern");
   }
 });
+
+//**** addnew.html
 
 ipcMain.on("submit-new-pattern-button-clicked", (event, pattern) => {
   addNewSewingPattern(pattern);
@@ -93,41 +126,35 @@ ipcMain.on("open-cover-image-button-clicked", (event) => {
   }
 });
 
-/**
- * This handler reacts when the details button is clicked for a pattern in the
- * main window.
- * Once a pattern is selected we make sure there isn't already a window opened
- * for it, if so we focus on it.
- * Otherwise we create a new window with the proper HTML file location and an
- * identifier that matches the database id of the pattern selected.
- * After we create a window we await on the call to the function that retrieves
- * the pattern from the database and then send an event to the window, once its
- * focused, with the pattern to display the data.
- * @param {integer} id The unique id of the pattern to open
- */
-ipcMain.on("details-button-clicked", async (event, id) => {
-  let window;
-  if (windows.has(id)) {
-    window = windows.get(id);
-    window.focus();
-  } else {
-    window = createNewSewingPatternWindow(PATTERN_DETAIL_FILE_LOCATION, id);
-    let pattern = await openSewingPatternById(id);
-    console.log("this is the pattern before sending: " + pattern.name);
-    window.setTitle("Sewing Vault - " + pattern.name);
-    window.on("focus", () => {
-      window.webContents.send("pattern-details-ready", pattern);
-      console.log("sent the event");
-    });
-  }
-});
+//**** patterndetail.html
 
 ipcMain.on("save-changes-button-clicked", async (event, pattern) => {
+  console.log("main - save changes button clicked");
   let updatedId = await updateSewingPattern(pattern);
   let window = windows.get(updatedId);
   window.close();
   mainWindow.focus();
   getAllSewingPatterns();
+});
+
+ipcMain.on("add-images-button-clicked", (event, patternId) => {
+  let window = windows.get(patternId);
+  console.log("main - open additional images button clicked");
+  const files = dialog.showOpenDialogSync(window, {
+    properties: ["openFile", "multiSelections"],
+    filters: [{ name: "Image Files", extensions: ["jpg", "jpeg", "png"] }],
+  });
+
+  if (files) {
+    console.log(
+      "main - open additional images button clicked -- images selected"
+    );
+    let imagesb64 = [];
+    files.forEach((element) => {
+      imagesb64.push(fs.readFileSync(element).toString("base64"));
+    });
+    window.webContents.send("additional-images-uploaded", imagesb64);
+  }
 });
 
 /***** Functions *****/

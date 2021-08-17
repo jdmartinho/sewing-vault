@@ -93,7 +93,13 @@ const updateSewingPattern = (exports.updateSewingPattern = (pattern) => {
   return new Promise((resolve, reject) => {
     db.update(
       { _id: pattern.id },
-      { $set: { name: pattern.name } },
+      {
+        $set: {
+          name: pattern.name,
+          cover: pattern.cover,
+          additional_images: pattern.additional_images,
+        },
+      },
       { returnUpdatedDocs: true },
       (err, numAffected, updatedObject, upsert) => {
         if (err) {
