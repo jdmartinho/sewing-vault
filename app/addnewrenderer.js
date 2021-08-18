@@ -20,7 +20,7 @@ let ADDITIONAL_IMAGES_TO_SAVE;
 
 openCoverImageButton.addEventListener("click", () => {
   console.log("addnewrenderer - click open cover image button");
-  ipcRenderer.send("open-cover-image-button-clicked");
+  ipcRenderer.send("open-cover-image-button-clicked", ADD_NEW_WINDOW_ID);
 });
 
 addImagesButton.addEventListener("click", () => {

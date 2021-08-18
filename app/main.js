@@ -46,8 +46,6 @@ app.on("window-all-closed", () => {
 
 /***** IPC Communication *****/
 
-//**** indexrenderer.js
-
 ipcMain.on("search-button-clicked", (event, searchText) => {
   if (!searchText) {
     getAllSewingPatterns();
@@ -99,8 +97,6 @@ ipcMain.on("add-new-button-clicked", () => {
   }
 });
 
-//**** addnew.html
-
 ipcMain.on("submit-new-pattern-button-clicked", (event, pattern) => {
   addNewSewingPattern(pattern);
   let window = windows.get(ADD_NEW_WINDOW_ID);
@@ -111,13 +107,10 @@ ipcMain.on("submit-new-pattern-button-clicked", (event, pattern) => {
 
 // The dialog causes a refresh if the button in the HTML doesn't have
 // the 'button' type set.
-ipcMain.on("open-cover-image-button-clicked", (event) => {
-  let window = windows.get(ADD_NEW_WINDOW_ID);
+ipcMain.on("open-cover-image-button-clicked", (event, patternId) => {
   console.log("main - open cover image button clicked");
-  const files = dialog.showOpenDialogSync(window, {
-    properties: ["openFile"],
-    filters: [{ name: "Image Files", extensions: ["jpg", "jpeg", "png"] }],
-  });
+  let window = windows.get(patternId);
+  const files = openDialogForImages(window, false);
 
   if (files) {
     console.log("main - open cover image button clicked -- image selected");
@@ -125,8 +118,6 @@ ipcMain.on("open-cover-image-button-clicked", (event) => {
     window.webContents.send("cover-image-uploaded", imageb64);
   }
 });
-
-//**** patterndetail.html
 
 ipcMain.on("save-changes-button-clicked", async (event, pattern) => {
   console.log("main - save changes button clicked");
@@ -140,7 +131,7 @@ ipcMain.on("save-changes-button-clicked", async (event, pattern) => {
 ipcMain.on("add-images-button-clicked", (event, patternId) => {
   console.log("main - open additional images button clicked");
   let window = windows.get(patternId);
-  const files = openDialogForAdditionalImages(window);
+  const files = openDialogForImages(window, true);
 
   if (files) {
     console.log(
@@ -229,12 +220,17 @@ const displayPatterns = (patterns) => {
 /**
  * Opens a dialog and allows multiple images to be selected for the given window.
  * @param {BrowserWindow} window The window for which we are opening a dialog
+ * @param {boolean} multiSelections If true allow selection of multiple files
  * @returns {Object[]} The images selected
  */
-const openDialogForAdditionalImages = (window) => {
+const openDialogForImages = (window, multiSelections) => {
   console.log("main - open dialog for additional images");
+  let props = ["openFile"];
+  if (multiSelections) {
+    props.push("multiSelections");
+  }
   const files = dialog.showOpenDialogSync(window, {
-    properties: ["openFile", "multiSelections"],
+    properties: props,
     filters: [{ name: "Image Files", extensions: ["jpg", "jpeg", "png"] }],
   });
   return files;
