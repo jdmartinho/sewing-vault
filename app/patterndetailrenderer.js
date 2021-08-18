@@ -4,9 +4,10 @@ const ipcRenderer = electron.ipcRenderer;
 /***** HTML Elements *****/
 const patternNameInput = document.querySelector("#pattern-name");
 const coverImageDisplay = document.querySelector("#cover-image");
-const saveChangesButton = document.querySelector("#save-changes-button");
 const additionalImagesDisplay = document.querySelector("#additional-images");
+const saveChangesButton = document.querySelector("#save-changes-button");
 const addImagesButton = document.querySelector("#add-images");
+const deletePatternButton = document.querySelector("#delete-pattern");
 const coverImageFile = document.querySelector("#cover-image-img");
 
 let PATTERN_FULL_DATA;
@@ -31,6 +32,11 @@ saveChangesButton.addEventListener("click", () => {
     additional_images: imagesToSave,
   };
   ipcRenderer.send("save-changes-button-clicked", pattern);
+});
+
+deletePatternButton.addEventListener("click", () => {
+  console.log("patterndetailsrenderer - click delete pattern button");
+  ipcRenderer.send("delete-pattern-button-clicked", PATTERN_FULL_DATA._id);
 });
 
 ipcRenderer.on("pattern-details-ready", (event, pattern) => {

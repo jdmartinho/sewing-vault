@@ -89,7 +89,7 @@ const addNewSewingPattern = (exports.addNewSewingPattern = (pattern) => {
  * @returns {Promise} Promise that when resolved returns the id of the updated pattern
  */
 const updateSewingPattern = (exports.updateSewingPattern = (pattern) => {
-  console.log("database - updating sewing pattern named " + pattern.name);
+  console.log("nosqldb - updating sewing pattern named " + pattern.name);
   return new Promise((resolve, reject) => {
     db.update(
       { _id: pattern.id },
@@ -109,5 +109,23 @@ const updateSewingPattern = (exports.updateSewingPattern = (pattern) => {
         resolve(updatedObject._id);
       }
     );
+  });
+});
+
+/**
+ * Deletes a sewing pattern from the database.
+ * @param {string} patternId The id of the pattern to delete
+ * @returns {Promise} Promise that when resolved returns the id of the deleted pattern
+ */
+const deleteSewingPattern = (exports.deleteSewingPattern = (patternId) => {
+  console.log("nosqldb - deleting sewing pattern with id " + patternId);
+  return new Promise((resolve, reject) => {
+    db.remove({ _id: patternId }, {}, (err, numberRemoved) => {
+      if (err) {
+        reject(err);
+      }
+      console.log("nosqldb - removed " + numberRemoved + " patterns");
+      resolve(patternId);
+    });
   });
 });

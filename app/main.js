@@ -157,6 +157,15 @@ ipcMain.on("add-images-button-clicked", (event, patternId) => {
   }
 });
 
+ipcMain.on("delete-pattern-button-clicked", async (event, patternId) => {
+  console.log("main - delete pattern button clicked");
+  let deletedId = await deleteSewingPattern(patternId);
+  let window = windows.get(deletedId);
+  window.close();
+  mainWindow.focus();
+  getAllSewingPatterns();
+});
+
 /***** Functions *****/
 
 /**
@@ -294,4 +303,19 @@ const updateSewingPattern = async (pattern) => {
     updatedId = returnedId;
   });
   return updatedId;
+};
+
+/**
+ * Calls the Database API to delete a sewing pattern.
+ * @param {string} patternId The identifier of the pattern to delete
+ * @returns {string} The identifier of the pattern removed
+ */
+const deleteSewingPattern = async (patternId) => {
+  console.log("main - Deleting sewing pattern");
+  var deletedId = null;
+  var aPromise = await db.deleteSewingPattern(patternId).then((returnedId) => {
+    console.log("mai - deleted pattern with id " + returnedId);
+    deletedId = returnedId;
+  });
+  return deletedId;
 };
