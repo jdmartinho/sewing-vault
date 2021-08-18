@@ -138,22 +138,15 @@ ipcMain.on("save-changes-button-clicked", async (event, pattern) => {
 });
 
 ipcMain.on("add-images-button-clicked", (event, patternId) => {
-  let window = windows.get(patternId);
   console.log("main - open additional images button clicked");
-  const files = dialog.showOpenDialogSync(window, {
-    properties: ["openFile", "multiSelections"],
-    filters: [{ name: "Image Files", extensions: ["jpg", "jpeg", "png"] }],
-  });
+  let window = windows.get(patternId);
+  const files = openDialogForAdditionalImages(window);
 
   if (files) {
     console.log(
       "main - open additional images button clicked -- images selected"
     );
-    let imagesb64 = [];
-    files.forEach((element) => {
-      imagesb64.push(fs.readFileSync(element).toString("base64"));
-    });
-    window.webContents.send("additional-images-uploaded", imagesb64);
+    sendAdditionalImagesUploaded(window, files);
   }
 });
 
@@ -231,6 +224,34 @@ const displayPatterns = (patterns) => {
   // This event handler should update the html with the results
   console.log("main - display patterns");
   mainWindow.webContents.send("list-updated", patterns);
+};
+
+/**
+ * Opens a dialog and allows multiple images to be selected for the given window.
+ * @param {BrowserWindow} window The window for which we are opening a dialog
+ * @returns {Object[]} The images selected
+ */
+const openDialogForAdditionalImages = (window) => {
+  console.log("main - open dialog for additional images");
+  const files = dialog.showOpenDialogSync(window, {
+    properties: ["openFile", "multiSelections"],
+    filters: [{ name: "Image Files", extensions: ["jpg", "jpeg", "png"] }],
+  });
+  return files;
+};
+
+/**
+ * Sends the "additional-images-uploaded" even to the given window with the list
+ * of files in base64 encoding.
+ * @param {BrowserWindow} window The window for which we are sending the event
+ * @param {Object[]} images The list of images to pass to the window for handling
+ */
+const sendAdditionalImagesUploaded = (window, images) => {
+  let imagesb64 = [];
+  images.forEach((element) => {
+    imagesb64.push(fs.readFileSync(element).toString("base64"));
+  });
+  window.webContents.send("additional-images-uploaded", imagesb64);
 };
 
 /**
