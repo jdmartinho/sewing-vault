@@ -84,7 +84,7 @@ const addNewSewingPattern = (exports.addNewSewingPattern = (pattern) => {
 });
 
 /**
- * Updates a sewing pattern in the database
+ * Updates a sewing pattern in the database.
  * @param {Object} pattern The sewing pattern object to update in the database
  * @returns {Promise} Promise that when resolved returns the id of the updated pattern
  */

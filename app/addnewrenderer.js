@@ -14,7 +14,8 @@ const submitNewPatternButton = document.querySelector(
 
 const ADD_NEW_WINDOW_ID = "addnew";
 let COVER_IMAGE;
-let ADDITIONAL_IMAGES_TO_SAVE;
+// At any given moment this array contains the images to display and save
+let ADDITIONAL_IMAGES_TO_SAVE = [];
 
 /***** Event Listeners *****/
 
@@ -46,7 +47,19 @@ ipcRenderer.on("cover-image-uploaded", (event, cover) => {
 
 ipcRenderer.on("additional-images-uploaded", (event, images) => {
   console.log("patterndetailsrenderer - additional images uploaded");
+  // We prepare the images into objects with an id
+  let imageObjectsToDisplay = uifunctions.prepareImagesForSave(
+    ADDITIONAL_IMAGES_TO_SAVE.length,
+    images
+  );
   // We set the images aside to save later, in case the user clicks save changes
-  ADDITIONAL_IMAGES_TO_SAVE = images;
-  uifunctions.displayAdditionalImages(additionalImagesDisplay, images);
+  imageObjectsToDisplay.forEach((element) => {
+    console.log(element.id);
+    console.log(element.image);
+    ADDITIONAL_IMAGES_TO_SAVE.push(element);
+  });
+  uifunctions.displayAdditionalImages(
+    additionalImagesDisplay,
+    ADDITIONAL_IMAGES_TO_SAVE
+  );
 });
