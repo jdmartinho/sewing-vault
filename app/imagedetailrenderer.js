@@ -1,12 +1,28 @@
 const electron = require("electron");
 const ipcRenderer = electron.ipcRenderer;
 
+/***** HTML Elements *****/
 const imageAreaDisplay = document.querySelector("#image-area-display");
+const deleteImageButton = document.querySelector("#delete-image");
+
+let PATTERN_FULL_DATA;
+let IMAGE_ID;
+
+/***** Event Listeners *****/
+
+deleteImageButton.addEventListener("click", () => {
+  console.log("imagedetailrenderer - delete button clicked");
+  ipcRenderer.send("delete-image-button-clicked", PATTERN_FULL_DATA, IMAGE_ID);
+});
 
 ipcRenderer.on("image-ready-to-display", (event, pattern, imageId) => {
   console.log("imagedetaillrenderer - image ready to display");
+  PATTERN_FULL_DATA = pattern;
+  IMAGE_ID = imageId;
   displayFullImage(pattern, imageId);
 });
+
+/***** Functions *****/
 
 /**
  * Displays the image in full size on this window.

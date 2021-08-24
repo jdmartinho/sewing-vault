@@ -162,6 +162,18 @@ ipcMain.on("image-area-clicked", (event, pattern, imageId) => {
   });
 });
 
+ipcMain.on("delete-image-button-clicked", async (event, pattern, imageId) => {
+  console.log("main - delete image button event received");
+  let updatedPattern = await deleteImageFromPattern(pattern, imageId);
+  // Close window automatically
+  let imageWindow = windows.get(pattern._id + "-" + imageId);
+  imageWindow.close();
+  // Refresh data on the sewing pattern details window
+  let window = windows.get(updatedPattern._id);
+  window.focus();
+  window.webContents.send("pattern-details-ready", updatedPattern);
+});
+
 /***** Functions *****/
 
 /**
@@ -347,4 +359,25 @@ const deleteSewingPattern = async (patternId) => {
     deletedId = returnedId;
   });
   return deletedId;
+};
+
+/**
+ * Removes an image from the array of images contained in the sewing pattern.
+ * @param {Object} pattern The pattern to update
+ * @param {integer} imageId The id of the image to remove from the pattern
+ * @returns {Object} The updated pattern without the image
+ */
+const deleteImageFromPattern = async (pattern, imageId) => {
+  console.log(
+    "main - Deleting image " + imageId + " from pattern " + pattern.name
+  );
+  // Call the Database API for deleting
+  let updatedPattern = null;
+  var aPromise = await db
+    .deleteImageFromPattern(pattern, imageId)
+    .then((returnedObject) => {
+      console.log("main - removed image from pattern");
+      updatedPattern = returnedObject;
+    });
+  return updatedPattern;
 };

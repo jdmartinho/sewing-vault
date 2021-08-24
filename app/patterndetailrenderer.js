@@ -42,7 +42,7 @@ deletePatternButton.addEventListener("click", () => {
 ipcRenderer.on("pattern-details-ready", (event, pattern) => {
   ADDITIONAL_IMAGES_TO_SAVE = pattern.additional_images;
   PATTERN_FULL_DATA = pattern;
-  console.log("patterndetailrenderer - received details: " + pattern);
+  console.log("patterndetailrenderer - received details: " + pattern.name);
   patternNameInput.value = pattern.name;
   uifunctions.displayCover(coverImageDisplay, pattern.cover);
   if (ADDITIONAL_IMAGES_TO_SAVE.length > 0) {

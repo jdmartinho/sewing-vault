@@ -129,3 +129,47 @@ const deleteSewingPattern = (exports.deleteSewingPattern = (patternId) => {
     });
   });
 });
+
+/**
+ * Deletes a specific image from the provided pattern.
+ * @param {Object} pattern The sewing pattern to update
+ * @param {integer} imageId The id of the image to remove
+ * @returns {Promise} Promise that when resolved returns the updated pattern without the
+ * removed image
+ */
+const deleteImageFromPattern = (exports.deleteImageFromPattern = (
+  pattern,
+  imageId
+) => {
+  console.log(
+    "nosqldb - deleting image " + imageId + " from pattern " + pattern.name
+  );
+
+  // We modify the array of images contained in the pattern by finding the index of
+  // the object and splicing the array
+  let newImages = pattern.additional_images;
+  const removeIndex = newImages.findIndex((item) => item.id === imageId);
+  newImages.splice(removeIndex, 1);
+  pattern.additional_images = newImages;
+
+  return new Promise((resolve, reject) => {
+    db.update(
+      { _id: pattern._id },
+      {
+        $set: {
+          name: pattern.name,
+          cover: pattern.cover,
+          additional_images: pattern.additional_images,
+        },
+      },
+      { returnUpdatedDocs: true },
+      (err, numAffected, updatedObject, upsert) => {
+        if (err) {
+          reject(err);
+        }
+        console.log("nosqldb - removed image from pattern");
+        resolve(updatedObject);
+      }
+    );
+  });
+});
