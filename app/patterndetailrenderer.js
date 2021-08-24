@@ -64,7 +64,7 @@ ipcRenderer.on("additional-images-uploaded", (event, images) => {
   console.log("patterndetailrenderer - additional images uploaded");
   // We prepare the images with ids for when we want to save them
   let imageObjectsToDisplay = uifunctions.prepareImagesForSave(
-    ADDITIONAL_IMAGES_TO_SAVE.length,
+    ADDITIONAL_IMAGES_TO_SAVE[ADDITIONAL_IMAGES_TO_SAVE.length - 1].id + 1,
     images
   );
   // We set the images aside to save later, in case the user clicks save changes
@@ -101,12 +101,10 @@ const createPatternForSaving = () => {
  */
 const addListenersToImages = () => {
   let imageAreas = additionalImagesDisplay.childNodes;
-  let count = 0;
   imageAreas.forEach((element) => {
     element.addEventListener("click", () => {
       let id = element.id.match(/[0-9]+$/);
       ipcRenderer.send("image-area-clicked", PATTERN_FULL_DATA, id);
     });
-    count++;
   });
 };

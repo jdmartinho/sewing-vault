@@ -148,7 +148,7 @@ const deleteImageFromPattern = (exports.deleteImageFromPattern = (
   // We modify the array of images contained in the pattern by finding the index of
   // the object and splicing the array
   let newImages = pattern.additional_images;
-  const removeIndex = newImages.findIndex((item) => item.id === imageId);
+  const removeIndex = newImages.findIndex((item) => item.id == imageId);
   newImages.splice(removeIndex, 1);
   pattern.additional_images = newImages;
 

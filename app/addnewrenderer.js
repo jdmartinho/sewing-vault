@@ -54,8 +54,6 @@ ipcRenderer.on("additional-images-uploaded", (event, images) => {
   );
   // We set the images aside to save later, in case the user clicks save changes
   imageObjectsToDisplay.forEach((element) => {
-    console.log(element.id);
-    console.log(element.image);
     ADDITIONAL_IMAGES_TO_SAVE.push(element);
   });
   uifunctions.displayAdditionalImages(

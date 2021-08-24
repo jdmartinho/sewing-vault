@@ -30,8 +30,10 @@ ipcRenderer.on("image-ready-to-display", (event, pattern, imageId) => {
  * @param {Integer} imageId The image id for the image to display
  */
 const displayFullImage = (pattern, imageId) => {
-  let imageToDisplay = pattern.additional_images[imageId].image;
-  const imgSrc = `data:image/jpg;base64,${imageToDisplay}`;
+  let imageToDisplay = pattern.additional_images.find(
+    (elem) => elem.id == imageId
+  );
+  const imgSrc = `data:image/jpg;base64,${imageToDisplay.image}`;
   imageAreaDisplay.setAttribute("src", imgSrc);
   imageAreaDisplay.setAttribute("style", "width:100%;height:auto;");
 };

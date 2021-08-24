@@ -41,6 +41,9 @@ const prepareImagesForSave = (exports.prepareImagesForSave = (
   countStart,
   images
 ) => {
+  console.log(
+    "uifunctions - prepare images for save starting at " + countStart
+  );
   let imagesObject = [];
   let count = countStart;
   images.forEach((element) => {
