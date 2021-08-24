@@ -6,6 +6,7 @@ const ipcMain = electron.ipcMain;
 
 const ADD_NEW_FILE_LOCATION = "app/addnew.html";
 const PATTERN_DETAIL_FILE_LOCATION = "app/patterndetail.html";
+const IMAGE_DETAIL_FILE_LOCATION = "app/imagedetail.html";
 const ADD_NEW_WINDOW_ID = "addnew";
 
 // Keeps track of windows
@@ -72,7 +73,7 @@ ipcMain.on("details-button-clicked", async (event, id) => {
     window = windows.get(id);
     window.focus();
   } else {
-    window = createNewSewingPatternWindow(PATTERN_DETAIL_FILE_LOCATION, id);
+    window = createNewWindow(PATTERN_DETAIL_FILE_LOCATION, id);
     let pattern = await openSewingPatternById(id);
     console.log("main - details button clicked for: " + pattern.name);
     window.setTitle("Sewing Vault - " + pattern.name);
@@ -89,10 +90,7 @@ ipcMain.on("add-new-button-clicked", () => {
     window = windows.get(ADD_NEW_WINDOW_ID);
     window.focus();
   } else {
-    window = createNewSewingPatternWindow(
-      ADD_NEW_FILE_LOCATION,
-      ADD_NEW_WINDOW_ID
-    );
+    window = createNewWindow(ADD_NEW_FILE_LOCATION, ADD_NEW_WINDOW_ID);
     window.setTitle("Sewing Vault - Add New Pattern");
   }
 });
@@ -150,19 +148,33 @@ ipcMain.on("delete-pattern-button-clicked", async (event, patternId) => {
   getAllSewingPatterns();
 });
 
+ipcMain.on("image-area-clicked", (event, pattern, imageId) => {
+  console.log(
+    "main - image clicked " + imageId + " for pattern " + pattern.name
+  );
+
+  let imageWindowId = pattern._id + "-" + imageId;
+  let window = createNewWindow(IMAGE_DETAIL_FILE_LOCATION, imageWindowId);
+  window.setTitle("Sewing Vault - Image Detail - " + pattern.name);
+  window.once("focus", () => {
+    window.webContents.send("image-ready-to-display", pattern, imageId);
+    console.log("main - sent pattern details ready event");
+  });
+});
+
 /***** Functions *****/
 
 /**
  * Creates a new window in the application that is not the main window.
  * Uses identifiers to add the new window to a Map. The identifiers are
- * tied to the database identifier of the sewing pattern to display.
+ * tied to the database identifier of the sewing pattern and other data to display.
  * In the case of a window to add a new pattern a special string identifier
  * is passed to this function.
  * @param {string} fileLocation The HTML file to load in this window
  * @param {integer or string} id The identifier of the new window
  * @returns {BrowserWindow} The newly created window
  */
-const createNewSewingPatternWindow = (fileLocation, id) => {
+const createNewWindow = (fileLocation, id) => {
   let x, y;
   const currentWindow = BrowserWindow.getFocusedWindow();
 

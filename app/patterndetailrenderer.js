@@ -42,7 +42,6 @@ deletePatternButton.addEventListener("click", () => {
 ipcRenderer.on("pattern-details-ready", (event, pattern) => {
   ADDITIONAL_IMAGES_TO_SAVE = pattern.additional_images;
   PATTERN_FULL_DATA = pattern;
-  console.log("----> got something");
   console.log("patterndetailrenderer - received details: " + pattern);
   patternNameInput.value = pattern.name;
   uifunctions.displayCover(coverImageDisplay, pattern.cover);
@@ -52,6 +51,7 @@ ipcRenderer.on("pattern-details-ready", (event, pattern) => {
       ADDITIONAL_IMAGES_TO_SAVE
     );
   }
+  addListenersToImages();
 });
 
 ipcRenderer.on("cover-image-uploaded", (event, cover) => {
@@ -92,4 +92,21 @@ const createPatternForSaving = () => {
     cover: coverImageToSave,
     additional_images: ADDITIONAL_IMAGES_TO_SAVE,
   };
+};
+
+/**
+ * This functions adds an event listener to each image area that when clicked
+ * will send an "image-area-clicked" event to the main process with the pattern
+ * data and with the image id.
+ */
+const addListenersToImages = () => {
+  let imageAreas = additionalImagesDisplay.childNodes;
+  let count = 0;
+  imageAreas.forEach((element) => {
+    element.addEventListener("click", () => {
+      let id = element.id.match(/[0-9]+$/);
+      ipcRenderer.send("image-area-clicked", PATTERN_FULL_DATA, id);
+    });
+    count++;
+  });
 };
