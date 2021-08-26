@@ -9,13 +9,22 @@
     <p>Add New Sewing Pattern</p>
     <hr />
     <section>
-      <form>
+      <form action="#" method="POST" id="add-new-pattern-form">
         <label for="pattern-name">Name:</label>
-        <input id="pattern-name" type="text" name="pattern-name" />
+        <input id="pattern-name" type="text" name="pattern-name" required />
         <p></p>
         <div id="cover-image"></div>
         <p></p>
         <button type="button" id="open-cover-image">Add Cover Image</button>
+        <p></p>
+        <label for="company-name">Company:</label>
+        <input id="company-name" type="text" name="company-name" />
+        <p></p>
+        <label for="year">Year:</label>
+        <input id="year" type="text" name="year" pattern="^\d{4}$" />
+        <p></p>
+        <label for="notes">Notes:</label>
+        <textarea id="notes" name="notes" style="resize: true"></textarea>
         <p></p>
         <div id="additional-images"></div>
         <p></p>

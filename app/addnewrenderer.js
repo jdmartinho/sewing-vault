@@ -6,6 +6,9 @@ const ipcRenderer = electron.ipcRenderer;
 const patternNameInput = document.querySelector("#pattern-name");
 const coverImageDisplay = document.querySelector("#cover-image");
 const openCoverImageButton = document.querySelector("#open-cover-image");
+const companyNameInput = document.querySelector("#company-name");
+const yearInput = document.querySelector("#year");
+const notesInput = document.querySelector("#notes");
 const additionalImagesDisplay = document.querySelector("#additional-images");
 const addImagesButton = document.querySelector("#add-images");
 const submitNewPatternButton = document.querySelector(
@@ -35,6 +38,9 @@ submitNewPatternButton.addEventListener("click", () => {
     name: patternNameInput.value,
     cover: COVER_IMAGE,
     additional_images: ADDITIONAL_IMAGES_TO_SAVE,
+    company: companyNameInput.value,
+    year: yearInput.value,
+    notes: notesInput.value,
   };
   ipcRenderer.send("submit-new-pattern-button-clicked", pattern);
 });

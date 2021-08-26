@@ -6,6 +6,9 @@ const ipcRenderer = electron.ipcRenderer;
 const patternNameInput = document.querySelector("#pattern-name");
 const coverImageDisplay = document.querySelector("#cover-image");
 const changeCoverImageButton = document.querySelector("#change-cover-image");
+const companyNameInput = document.querySelector("#company-name");
+const yearInput = document.querySelector("#year");
+const notesInput = document.querySelector("#notes");
 const additionalImagesDisplay = document.querySelector("#additional-images");
 const addImagesButton = document.querySelector("#add-images");
 const deletePatternButton = document.querySelector("#delete-pattern");
@@ -40,10 +43,8 @@ deletePatternButton.addEventListener("click", () => {
 });
 
 ipcRenderer.on("pattern-details-ready", (event, pattern) => {
-  ADDITIONAL_IMAGES_TO_SAVE = pattern.additional_images;
-  PATTERN_FULL_DATA = pattern;
   console.log("patterndetailrenderer - received details: " + pattern.name);
-  patternNameInput.value = pattern.name;
+  fillDetailsFromPattern(pattern);
   uifunctions.displayCover(coverImageDisplay, pattern.cover);
   if (ADDITIONAL_IMAGES_TO_SAVE.length > 0) {
     uifunctions.displayAdditionalImages(
@@ -91,7 +92,23 @@ const createPatternForSaving = () => {
     name: patternNameInput.value,
     cover: coverImageToSave,
     additional_images: ADDITIONAL_IMAGES_TO_SAVE,
+    company: companyNameInput.value,
+    year: yearInput.value,
+    notes: notesInput.value,
   };
+};
+
+/**
+ * Fills the UI fields with the provided pattern data
+ * @param {Object} pattern The pattern to use for displaying data
+ */
+const fillDetailsFromPattern = (pattern) => {
+  PATTERN_FULL_DATA = pattern;
+  ADDITIONAL_IMAGES_TO_SAVE = pattern.additional_images;
+  patternNameInput.value = pattern.name;
+  companyNameInput.value = pattern.company;
+  yearInput.value = pattern.year;
+  notesInput.value = pattern.notes;
 };
 
 /**

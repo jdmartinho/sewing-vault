@@ -4,9 +4,11 @@ const db = require("./nosqldb");
 const electron = require("electron");
 const ipcMain = electron.ipcMain;
 
+const INDEX_FILE_LOCATION = "app/index.html";
 const ADD_NEW_FILE_LOCATION = "app/addnew.html";
 const PATTERN_DETAIL_FILE_LOCATION = "app/patterndetail.html";
 const IMAGE_DETAIL_FILE_LOCATION = "app/imagedetail.html";
+// Special id for the Add New Pattern window
 const ADD_NEW_WINDOW_ID = "addnew";
 
 // Keeps track of windows
@@ -22,7 +24,7 @@ app.on("ready", () => {
     show: false,
   });
 
-  mainWindow.loadFile("app/index.html");
+  mainWindow.loadFile(INDEX_FILE_LOCATION);
 
   mainWindow.once("ready-to-show", () => {
     mainWindow.show();
