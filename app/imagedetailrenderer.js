@@ -1,5 +1,5 @@
-const electron = require("electron");
-const ipcRenderer = electron.ipcRenderer;
+// We get the APIs from preload
+const ipcRenderer = window.ipcRendererApi;
 
 /***** HTML Elements *****/
 const imageAreaDisplay = document.querySelector("#image-area-display");

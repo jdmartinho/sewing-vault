@@ -1,6 +1,6 @@
-const uifunctions = require("./uifunctions");
-const electron = require("electron");
-const ipcRenderer = electron.ipcRenderer;
+// We get the APIs from preload
+const ipcRenderer = window.ipcRendererApi;
+const uifunctions = window.uifunctionsApi;
 
 /***** HTML Elements *****/
 const patternNameInput = document.querySelector("#pattern-name");

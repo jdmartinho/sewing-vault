@@ -3,6 +3,7 @@ const fs = require("fs");
 const db = require("./nosqldb");
 const electron = require("electron");
 const ipcMain = electron.ipcMain;
+const path = require("path");
 
 const INDEX_FILE_LOCATION = "app/index.html";
 const ADD_NEW_FILE_LOCATION = "app/addnew.html";
@@ -18,8 +19,7 @@ let mainWindow = null;
 app.on("ready", () => {
   mainWindow = new BrowserWindow({
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
+      preload: path.join(__dirname, "preload.js"),
     },
     show: false,
   });
@@ -203,8 +203,7 @@ const createNewWindow = (fileLocation, id) => {
     x,
     y,
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
+      preload: path.join(__dirname, "preload.js"),
     },
     show: false,
   });

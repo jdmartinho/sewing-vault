@@ -1,6 +1,6 @@
-const uifunctions = require("./uifunctions");
-const electron = require("electron");
-const ipcRenderer = electron.ipcRenderer;
+// We get the APIs from preload
+const ipcRenderer = window.ipcRendererApi;
+const uifunctions = window.uifunctionsApi;
 
 /***** HTML Elements *****/
 const patternNameInput = document.querySelector("#pattern-name");
@@ -71,8 +71,12 @@ ipcRenderer.on("cover-image-uploaded", (event, cover) => {
 ipcRenderer.on("additional-images-uploaded", (event, images) => {
   console.log("patterndetailrenderer - additional images uploaded");
   // We prepare the images with ids for when we want to save them
+  let countStart =
+    ADDITIONAL_IMAGES_TO_SAVE.length > 0
+      ? ADDITIONAL_IMAGES_TO_SAVE[ADDITIONAL_IMAGES_TO_SAVE.length - 1].id + 1
+      : 0;
   let imageObjectsToDisplay = uifunctions.prepareImagesForSave(
-    ADDITIONAL_IMAGES_TO_SAVE[ADDITIONAL_IMAGES_TO_SAVE.length - 1].id + 1,
+    countStart,
     images
   );
   // We set the images aside to save later, in case the user clicks save changes
@@ -114,7 +118,9 @@ const createPatternForSaving = () => {
  */
 const fillDetailsFromPattern = (pattern) => {
   PATTERN_FULL_DATA = pattern;
-  ADDITIONAL_IMAGES_TO_SAVE = pattern.additional_images;
+  ADDITIONAL_IMAGES_TO_SAVE = pattern.additional_images
+    ? pattern.additional_images
+    : [];
   patternNameInput.value = pattern.name;
   companyNameInput.value = pattern.company;
   yearInput.value = pattern.year;
