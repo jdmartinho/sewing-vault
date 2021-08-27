@@ -14,9 +14,8 @@ const garmentsAddedDisplay = document.querySelector("#garments-added");
 const notesInput = document.querySelector("#notes");
 const additionalImagesDisplay = document.querySelector("#additional-images");
 const addImagesButton = document.querySelector("#add-images");
-const submitNewPatternButton = document.querySelector(
-  "#submit-new-pattern-button"
-);
+//const submitNewPatternButton = document.querySelector(  "#submit-new-pattern-button");
+const addNewPatternForm = document.querySelector("#add-new-pattern-form");
 
 const ADD_NEW_WINDOW_ID = "addnew";
 let COVER_IMAGE;
@@ -48,8 +47,8 @@ addImagesButton.addEventListener("click", () => {
   ipcRenderer.send("add-images-button-clicked", ADD_NEW_WINDOW_ID);
 });
 
-submitNewPatternButton.addEventListener("click", () => {
-  console.log("addnewrenderer - click submit new pattern button");
+addNewPatternForm.addEventListener("submit", () => {
+  console.log("addnewrenderer - submit event on form triggered");
   let pattern = {
     name: patternNameInput.value,
     cover: COVER_IMAGE,

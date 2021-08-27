@@ -15,7 +15,8 @@ const notesInput = document.querySelector("#notes");
 const additionalImagesDisplay = document.querySelector("#additional-images");
 const addImagesButton = document.querySelector("#add-images");
 const deletePatternButton = document.querySelector("#delete-pattern");
-const saveChangesButton = document.querySelector("#save-changes-button");
+//const saveChangesButton = document.querySelector("#save-changes-button");
+const editPatternForm = document.querySelector("#edit-pattern-form");
 
 let PATTERN_FULL_DATA;
 let COVER_IMAGE;
@@ -46,8 +47,8 @@ addImagesButton.addEventListener("click", () => {
   ipcRenderer.send("add-images-button-clicked", PATTERN_FULL_DATA._id);
 });
 
-saveChangesButton.addEventListener("click", () => {
-  console.log("patterndetailrenderer - click save changes button");
+editPatternForm.addEventListener("submit", () => {
+  console.log("patterndetailrenderer - edit pattern form submitted");
   let pattern = createPatternForSaving();
   ipcRenderer.send("save-changes-button-clicked", pattern);
 });
