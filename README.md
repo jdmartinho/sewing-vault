@@ -18,30 +18,31 @@ The application follows an architecture that has three tiers for logic
     * The API is provided in a way that multiple database technologies can be used/swapped
     * The database.js file uses SQLite 3 while the nosqldb.js file uses NeDB
 
-        ┌─────────────────┐
-        │                 │
-        │    renderer     │
-        └───┬─────────────┘
-            │        ▲
-preload.ipcRenderer  │
-            │        │
-            │      ipcMain
-            ▼        │
-        ┌────────────┴────┐
-        │                 │
-        │     main        │
-        └───┬─────────────┘
-            │        ▲
-            │        │
-            │  API   │
-            │        │
-            ▼        │
-        ┌────────────┴────┐
-        │                 │
-        │    database     │
-        │                 │
-        └─────────────────┘
-
+  ```
+    ┌─────────────────┐
+    │                 │
+    │    renderer     │
+    └───┬─────────────┘
+        │        ▲
+ipcRenderer    │
+        │        │
+        │      ipcMain
+        ▼        │
+    ┌────────────┴────┐
+    │                 │
+    │     main        │
+    └───┬─────────────┘
+        │        ▲
+        │        │
+        │  API   │
+        │        │
+        ▼        │
+    ┌────────────┴────┐
+    │                 │
+    │    database     │
+    │                 │
+    └─────────────────┘
+```
 
 # Notes
 * The best practice of exposing only required APIs in the renderer processes through the preload.js file is used.
