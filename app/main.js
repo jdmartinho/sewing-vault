@@ -15,6 +15,8 @@ const ADD_NEW_WINDOW_ID = "addnew";
 // Keeps track of windows
 let windows = new Map();
 let mainWindow = null;
+// This Set serves as a proxy to all the garment types in the garments datastore
+let GARMENT_TYPES = new Set();
 
 app.on("ready", () => {
   mainWindow = new BrowserWindow({
@@ -49,11 +51,12 @@ app.on("window-all-closed", () => {
 
 /***** IPC Communication *****/
 
-ipcMain.on("search-button-clicked", (event, searchText) => {
-  if (!searchText) {
+ipcMain.on("search-button-clicked", (event, searchOptions) => {
+  let searchName = searchOptions.name;
+  if (!searchName) {
     getAllSewingPatterns();
   } else {
-    getSewingPatternsByName(searchText);
+    getSewingPatternsByName(searchName);
   }
 });
 
@@ -122,6 +125,7 @@ ipcMain.on("open-cover-image-button-clicked", (event, patternId) => {
 ipcMain.on("save-changes-button-clicked", async (event, pattern) => {
   console.log("main - save changes button clicked");
   let updatedId = await updateSewingPattern(pattern);
+  addGarmentTypes(pattern.garments);
   let window = windows.get(updatedId);
   window.close();
   mainWindow.focus();
@@ -288,6 +292,13 @@ const getAllSewingPatterns = () => {
     });
     displayPatterns(results);
   });
+  // We also get all the garment types to update the UI for search suggestions
+  db.getAllGarmentTypes().then((results) => {
+    results.forEach((element) => {
+      console.log("main - id: " + element._id + " name: " + element.name);
+    });
+    updateGarmentTypes(results);
+  });
 };
 
 /**
@@ -330,6 +341,8 @@ const addNewSewingPattern = (pattern) => {
   db.addNewSewingPattern(pattern).then((insertedId) => {
     console.log("main - inserted new with id " + insertedId);
   });
+  // We also need to consider any new additions to the garment types database
+  addGarmentTypes(pattern.garments);
 };
 
 /**
@@ -381,4 +394,33 @@ const deleteImageFromPattern = async (pattern, imageId) => {
       updatedPattern = returnedObject;
     });
   return updatedPattern;
+};
+
+/**
+ * Takes an array of garment types and creates a Set from it. It then sends an
+ * event to the renderer process to update the UI with them.
+ * @param {Object[]} garmentTypes All the garment types to pass in the update
+ */
+const updateGarmentTypes = (garmentTypes) => {
+  console.log("main - updating garment types");
+  let garmentNames = garmentTypes.map((elem) => elem.name);
+  GARMENT_TYPES = new Set(garmentNames);
+  mainWindow.webContents.send("garment-types-updated", GARMENT_TYPES);
+};
+
+/**
+ * Takes an array of garment types (with names only) and if they don't
+ * exist on the GARMENT_TYPES proxy Set, it adds them to the database.
+ * @param {Object[]} garmentTypes The array of garment types to try to add
+ */
+const addGarmentTypes = (garmentTypes) => {
+  garmentTypes.forEach((element) => {
+    // Only insert it if it doesn't exist yet
+    if (!GARMENT_TYPES.has(element)) {
+      let garmentType = { name: element };
+      db.addNewGarmentType(garmentType).then((insertedId) => {
+        console.log("main - inserted new garment type with id " + insertedId);
+      });
+    }
+  });
 };

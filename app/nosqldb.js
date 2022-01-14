@@ -5,7 +5,10 @@ const Datastore = require("nedb");
  * https://stackabuse.com/nedb-a-lightweight-javascript-database/
  * https://stackoverflow.com/questions/38800493/nedb-how-to-get-docs-out-of-find-function
  */
-const db = new Datastore({ filename: "./vault.db", autoload: true });
+const vault = new Datastore({ filename: "./vault.db", autoload: true });
+const garments = new Datastore({ filename: "./garments.db", autoload: true });
+
+/***** Sewing Patterns - vault.db *****/
 
 /**
  * Returns all the patterns in the database.
@@ -14,7 +17,7 @@ const db = new Datastore({ filename: "./vault.db", autoload: true });
 const getAllPatterns = (exports.getAllPatterns = () => {
   console.log("nosqldb - getting all sewing patterns");
   return new Promise((resolve, reject) => {
-    db.find({}, (err, results) => {
+    vault.find({}, (err, results) => {
       if (err) {
         reject(err);
       }
@@ -34,7 +37,7 @@ const getAllPatterns = (exports.getAllPatterns = () => {
 const getSewingPatternsByName = (exports.getSewingPatternsByName = (name) => {
   console.log("nosqldb - getting sewing patterns named like " + name);
   return new Promise((resolve, reject) => {
-    db.find({ name: new RegExp(name, "i") }, (err, results) => {
+    vault.find({ name: new RegExp(name, "i") }, (err, results) => {
       if (err) {
         reject(err);
       }
@@ -52,7 +55,7 @@ const getSewingPatternsByName = (exports.getSewingPatternsByName = (name) => {
 const getSewingPatternById = (exports.getSewingPatternById = (id) => {
   console.log("nosqldb - getting sewing pattern with id " + id);
   return new Promise((resolve, reject) => {
-    db.find({ _id: id }, (err, results) => {
+    vault.find({ _id: id }, (err, results) => {
       if (err) {
         reject(err);
       }
@@ -73,7 +76,7 @@ const getSewingPatternById = (exports.getSewingPatternById = (id) => {
  */
 const addNewSewingPattern = (exports.addNewSewingPattern = (pattern) => {
   return new Promise((resolve, reject) => {
-    db.insert(pattern, (err, insertedObject) => {
+    vault.insert(pattern, (err, insertedObject) => {
       if (err) {
         reject(err);
       }
@@ -91,7 +94,7 @@ const addNewSewingPattern = (exports.addNewSewingPattern = (pattern) => {
 const updateSewingPattern = (exports.updateSewingPattern = (pattern) => {
   console.log("nosqldb - updating sewing pattern named " + pattern.name);
   return new Promise((resolve, reject) => {
-    db.update(
+    vault.update(
       { _id: pattern.id },
       pattern,
       { returnUpdatedDocs: true },
@@ -114,7 +117,7 @@ const updateSewingPattern = (exports.updateSewingPattern = (pattern) => {
 const deleteSewingPattern = (exports.deleteSewingPattern = (patternId) => {
   console.log("nosqldb - deleting sewing pattern with id " + patternId);
   return new Promise((resolve, reject) => {
-    db.remove({ _id: patternId }, {}, (err, numberRemoved) => {
+    vault.remove({ _id: patternId }, {}, (err, numberRemoved) => {
       if (err) {
         reject(err);
       }
@@ -122,6 +125,9 @@ const deleteSewingPattern = (exports.deleteSewingPattern = (patternId) => {
       resolve(patternId);
     });
   });
+  // For this patternId find the garment types it contained in the object
+  // Count the number of documents in garments.db that contain each of those
+  // If the count is 0 delete that name from the datastore
 });
 
 /**
@@ -147,7 +153,7 @@ const deleteImageFromPattern = (exports.deleteImageFromPattern = (
   pattern.additional_images = newImages;
 
   return new Promise((resolve, reject) => {
-    db.update(
+    vault.update(
       { _id: pattern._id },
       {
         $set: {
@@ -165,5 +171,61 @@ const deleteImageFromPattern = (exports.deleteImageFromPattern = (
         resolve(updatedObject);
       }
     );
+  });
+});
+
+/***** Garment Types - garments.db *****/
+
+/**
+ * Returns all the garment types in the database.
+ * @returns {Promise} Promise that when resolved contains all garment types
+ */
+const getAllGarmentTypes = (exports.getAllGarmentTypes = () => {
+  console.log("nosqldb - getting all garment types");
+  return new Promise((resolve, reject) => {
+    garments.find({}, (err, results) => {
+      if (err) {
+        reject(err);
+      }
+      console.log("nosqldb - found " + results.length + " results");
+      resolve(results);
+    });
+  });
+});
+
+/**
+ * Inserts a new garment type nto the database.
+ * @param {Object} garementType The garment type to insert into the database
+ * @returns {Promise} Promise that when resolved contains the id of the newly inserted garment type
+ */
+const addNewGarmentType = (exports.addNewGarmentType = (garmentType) => {
+  return new Promise((resolve, reject) => {
+    garments.insert(garmentType, (err, insertedObject) => {
+      if (err) {
+        reject(err);
+      }
+      console.log(
+        "nosqldb - inserted garment type with name " + garmentType.name
+      );
+      resolve(insertedObject._id);
+    });
+  });
+});
+
+/**
+ * Deletes a garment type from the database.
+ * @param {string} garmentTypeName The name of the garment type to delete
+ * @returns {Promise} Promise that when resolved returns the name of the deleted garment type
+ */
+const deleteGarmentType = (exports.deleteGarmentType = (garmentTypeName) => {
+  console.log("nosqldb - deleting garment type with id " + garmentTypeName);
+  return new Promise((resolve, reject) => {
+    garments.remove({ name: garmentTypeName }, {}, (err, numberRemoved) => {
+      if (err) {
+        reject(err);
+      }
+      console.log("nosqldb - removed " + numberRemoved + " garment types");
+      resolve(garmentTypeName);
+    });
   });
 });

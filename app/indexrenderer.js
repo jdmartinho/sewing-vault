@@ -2,9 +2,15 @@
 const ipcRenderer = window.ipcRendererApi;
 
 /***** HTML Elements *****/
-const addNewButton = document.querySelector("#add-new-button");
-const searchInput = document.querySelector("#search-input");
+const nameSearchInput = document.querySelector("#name-search-input");
+const garmentTypeSearchInput = document.querySelector(
+  "#garment-type-search-input"
+);
+const garmentTypeOptionsList = document.querySelector(
+  "#garment-type-options-list"
+);
 const searchButton = document.querySelector("#search-button");
+const addNewButton = document.querySelector("#add-new-button");
 const patternList = document.querySelector("#pattern-list");
 
 /***** Event Listeners *****/
@@ -15,13 +21,22 @@ addNewButton.addEventListener("click", () => {
 
 searchButton.addEventListener("click", () => {
   console.log("indexrenderer - click search button");
-  let searchText = searchInput.value;
-  ipcRenderer.send("search-button-clicked", searchText);
+  let searchOptions = {
+    name: nameSearchInput.value,
+    garmentType: garmentTypeSearchInput.value,
+  };
+
+  ipcRenderer.send("search-button-clicked", searchOptions);
 });
 
 ipcRenderer.on("list-updated", (event, patterns) => {
   console.log("indexrenderer - event list-updated received");
   renderSewingPatternsToList(patterns);
+});
+
+ipcRenderer.on("garment-types-updated", (event, garmentTypes) => {
+  console.log("indexrenderer - garment types updated received");
+  renderGarmentTypes(garmentTypes);
 });
 
 /***** Functions *****/
@@ -80,4 +95,19 @@ const createCoverImage = (element) => {
   const outHtml = `<img src=\"${imgSrc}\" style=\"width:100px;height:auto;\"/>`;
   coverImage.insertAdjacentHTML("beforeend", outHtml);
   return coverImage;
+};
+
+/**
+ * Displays all the garment types in the database as options in an HTML datalist.
+ * @param {Set} garmentTypes A Set of string names containing the garment types to display
+ */
+const renderGarmentTypes = (garmentTypes) => {
+  // Clear any previous results
+  garmentTypeOptionsList.innerHTML = "";
+  // Create a new option for each garment type
+  garmentTypes.forEach((element) => {
+    let option = document.createElement("option");
+    option.innerText = element;
+    garmentTypeOptionsList.appendChild(option);
+  });
 };

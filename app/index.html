@@ -9,7 +9,18 @@
     <p>Sewing Vault</p>
     <hr />
     <section>
-      <input id="search-input" name="Search Pattern" type="search" />
+      <label for="name-search-input">Name:</label>
+      <input id="name-search-input" name="Search Pattern" type="search" />
+      <p></p>
+      <label for="garment-type-search-input">Garment Type:</label>
+      <input
+        id="garment-type-search-input"
+        name="Garment Type"
+        type="search"
+        list="garment-type-options-list"
+      />
+      <datalist id="garment-type-options-list"> </datalist>
+      <p></p>
       <button id="search-button" name="Search" type="submit">Search</button>
       <p></p>
       <button
